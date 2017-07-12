@@ -1,22 +1,24 @@
 package com.memoryaxis.hbase.dao;
 
 import com.memoryaxis.hbase.po.User;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HConstants;
+
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author memoryaxis@gmail.com
  */
-public class UserDao {
+@Repository
+public class UserDao extends HbaseDao {
 
     private static final byte[] TABLE_NAME = Bytes.toBytes("users");
     private static final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes("info");
@@ -25,24 +27,6 @@ public class UserDao {
     private static final byte[] EMAIL_NAME = Bytes.toBytes("email");
 
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
-
-    private static Table table;
-
-    private void init() {
-        Configuration configuration = HBaseConfiguration.create();
-        configuration.set(HConstants.ZOOKEEPER_QUORUM, "AY140718105632175cb0Z");
-        try (
-                Connection connection = ConnectionFactory.createConnection(configuration)
-        ) {
-            table = connection.getTable(TableName.valueOf(TABLE_NAME));
-        } catch (IOException e) {
-            log.error("Init HBase Fail!", e);
-        }
-    }
-
-    private byte[] s2b(String str) {
-        return Bytes.toBytes(str);
-    }
 
     private Put mkPut(User user) {
         Put p = new Put(s2b(user.getUser()));
@@ -60,19 +44,36 @@ public class UserDao {
         return d;
     }
 
+    private Get mkGet(User user) {
+        return new Get(s2b(user.getUser()));
+    }
+
     public void insert(User user) throws IOException {
-        table.put(mkPut(user));
+        insert(mkPut(user));
     }
 
     public void update(User user) throws IOException {
-        table.put(mkPut(user));
+        update(mkPut(user));
     }
 
     public void delete(User user) throws IOException {
-        table.delete(mkDelete(user));
+        delete(mkDelete(user));
     }
 
-    public List<User> getList(User user) throws IOException {
-        return null;
+    public User get(User user) throws IOException {
+        Result r = get(mkGet(user));
+
+        User u = new User();
+        u.setUsername(b2s(r.getValue(COLUMN_FAMILY_NAME, USERNAME_NAME)));
+        u.setPassword(b2s(r.getValue(COLUMN_FAMILY_NAME, PASSWORD_NAME)));
+        u.setEmail(b2s(r.getValue(COLUMN_FAMILY_NAME, EMAIL_NAME)));
+
+        return user;
     }
+
+    @Override
+    TableName getTableName() {
+        return TableName.valueOf(TABLE_NAME);
+    }
+
 }

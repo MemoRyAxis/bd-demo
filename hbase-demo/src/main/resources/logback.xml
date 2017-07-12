@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<configuration scan="true">
+
+    <!-- TODO -->
+    <property name="AppName" value="hbase-demo"/>
+    <property name="LogHome" value="/opt/logs/"/>
+
+    <!-- 控制台日志 用于开发时打印 方便调试代码 线上环境需要关闭 -->
+    <appender name="CONSOLE_LOG" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>
+                [%date{HH:mm:ss}] %5p %-40.40logger{39} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- 自定义日志 用于线上环境打印部分DEBUG日志 方便查看 且能及时定位至关键错误及关键SQL等 若日志过多建议设置为INFO级别 -->
+    <appender name="DEBUG_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LogHome}${AppName}/stdout.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LogHome}${AppName}/stdout.log.%d{yyyy-MM-dd}.zip</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>
+                [%date{yyyy-MM-dd HH:mm:ss}] [%15.15thread] %5p %-40.40logger{39} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- 标准日志 所有项目统一风格 用于线上环境日志收集系统收集及分析 至少INFO级别 -->
+    <appender name="STD_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LogHome}${AppName}/${AppName}.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LogHome}${AppName}/${AppName}.log.%d{yyyy-MM-dd}.zip
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [${AppName}] [%thread] %-5level [%logger] -%msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org" level="ERROR" additivity="false"/>
+    <logger name="net.sf" level="ERROR" additivity="false"/>
+
+    <root level="TRACE">
+        <appender-ref ref="CONSOLE_LOG"/>
+        <appender-ref ref="DEBUG_LOG"/>
+        <appender-ref ref="STD_LOG"/>
+    </root>
+
+</configuration>
