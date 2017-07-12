@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-//@EnableSwagger2
 @SpringBootApplication
 @EnableAutoConfiguration
-// @EnableWebMvc
+@EnableSwagger2
 @Controller
 public class HbaseDemoApplication {
 
@@ -19,7 +19,7 @@ public class HbaseDemoApplication {
 
     @RequestMapping("/")
     public String index() {
-        return "redirect:/doc.html";
+        return "redirect:/swagger-ui.html";
     }
 
 }

@@ -1,7 +1,6 @@
 package com.memoryaxis.hbase.dao;
 
 import com.memoryaxis.hbase.po.User;
-
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -10,14 +9,14 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 /**
  * @author memoryaxis@gmail.com
  */
-@Repository
+@Component
 public class UserDao extends HbaseDao {
 
     private static final byte[] TABLE_NAME = Bytes.toBytes("users");

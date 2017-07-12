@@ -2,7 +2,8 @@ package com.memoryaxis.hbase.controller;
 
 import com.memoryaxis.hbase.dao.UserDao;
 import com.memoryaxis.hbase.po.User;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.ApiOperation;
-
 /**
  * @author memoryaxis@gmail.com
  */
 @RestController
-@RequestMapping(value = "/user", method = RequestMethod.GET)
-//@Api(value = "用户管理", tags = "user")
+@RequestMapping("/user")
+@Api(value = "用户管理", tags = "user")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -26,7 +25,7 @@ public class UserController {
     private UserDao userDao;
 
     @ApiOperation(value = "添加用户")
-    @RequestMapping("/insert")
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
     public String insert(User user) {
         try {
             userDao.insert(user);
@@ -36,7 +35,8 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping("/update")
+    @ApiOperation(value = "更新用户")
+    @RequestMapping(value = "/user", method = RequestMethod.PUT)
     public String update(User user) {
         try {
             userDao.update(user);
@@ -46,7 +46,8 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除用户")
+    @RequestMapping(value = "/user", method = RequestMethod.DELETE)
     public String delete(User user) {
         try {
             userDao.delete(user);
@@ -56,7 +57,8 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping("/get")
+    @ApiOperation(value = "获取用户")
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String get(User user) {
         try {
             User r = userDao.get(user);
