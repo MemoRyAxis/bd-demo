@@ -1,4 +1,6 @@
-package com.memoryaxis.hbase;
+package com.memoryaxis.hbase.demo;
+
+import com.memoryaxis.hbase.HbaseDemoApplication;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -24,13 +26,20 @@ import java.util.List;
 /**
  * @author memoryaxis@gmail.com
  */
-public class HbaseDemo {
+public class HbaseBaseOpDemo extends HbaseDemo {
 
     private static final Logger log = LoggerFactory.getLogger(HbaseDemoApplication.class);
 
-    private static final String QUORUM = "ay140718105632175cb0z";
-
     private static Configuration configuration;
+
+    static {
+        configuration = HBaseConfiguration.create();
+        // HBase 地址
+        configuration.set(HConstants.ZOOKEEPER_QUORUM, QUORUM);
+//        configuration.set("hbase.zookeeper.property.clientPort", "2181");
+//        configuration.set("hbase.rpc.timeout", "3000");
+//        configuration.set("zookeeper.znode.parent", "/hbase");
+    }
 
     public static void main(String[] args) {
 
@@ -44,16 +53,6 @@ public class HbaseDemo {
 
         hbaseTimestamp();
     }
-
-    static {
-        configuration = HBaseConfiguration.create();
-        // HBase 地址
-        configuration.set(HConstants.ZOOKEEPER_QUORUM, QUORUM);
-//        configuration.set("hbase.zookeeper.property.clientPort", "2181");
-//        configuration.set("hbase.rpc.timeout", "3000");
-//        configuration.set("zookeeper.znode.parent", "/hbase");
-    }
-
 
     private static void hbaseFirst() {
         try (Connection connection = ConnectionFactory.createConnection(configuration)) {
