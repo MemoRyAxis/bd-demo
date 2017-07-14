@@ -15,7 +15,6 @@ import java.io.IOException;
 
 /**
  * @author memoryaxis@gmail.com
- * @TODO update singleton
  */
 public class HbaseClient {
 
@@ -25,8 +24,6 @@ public class HbaseClient {
 
     private Connection connection;
 
-    private static HbaseClient instance = null;
-
     private static final String QUORUM = "ay140718105632175cb0z";
 
     private HbaseClient() {
@@ -34,7 +31,17 @@ public class HbaseClient {
     }
 
 
-    public void init() {
+    private static class HbaseClientHolder {
+        private static HbaseClient instance = new HbaseClient();
+    }
+
+
+    public static HbaseClient getInstance() {
+        return HbaseClientHolder.instance;
+    }
+
+
+    private void init() {
         try {
             configuration = HBaseConfiguration.create();
             configuration.set(HConstants.ZOOKEEPER_QUORUM, QUORUM);
@@ -45,18 +52,6 @@ public class HbaseClient {
         } catch (IOException e) {
             log.error("Hbase Client Init Fail!", e);
         }
-    }
-
-
-    public static HbaseClient getInstance() {
-        if (instance == null) {
-            synchronized (HbaseClient.class) {
-                if (instance == null) {
-                    instance = new HbaseClient();
-                }
-            }
-        }
-        return instance;
     }
 
 
